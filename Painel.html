@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F6FC; --surface:#FFFFFF; --ink:#0A1A3A; --muted:#4A5A78; --line:#D6E0F0;
+  --leaf:#0038A8; --leaf-2:#1E64C8; --mango:#F7B500; --acai:#E8711A;
+  --ok:#1E6B4A; --ok-cl:#E1F0E8; --warn:#8A5D0E; --warn-cl:#F8EDD6; --bad:#9A2A35; --bad-cl:#F8E4E6;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:22px 18px 48px}
+.voltar{display:inline-block;color:var(--muted);font-size:.92rem;margin-bottom:16px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(1.8rem,6vw,2.4rem);line-height:1.05;letter-spacing:-.02em;margin:0 0 16px}
+h2{font-family:var(--display);font-size:1.2rem;margin:0 0 10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px}
+.login{max-width:420px}
+label{display:block;font-weight:700;margin:0 0 6px}
+input,textarea,select{width:100%;font:inherit;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);margin-bottom:14px}
+textarea{min-height:100px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:3px solid var(--mango);outline-offset:1px}
+button.prim{font:inherit;font-weight:700;border:0;border-radius:12px;padding:12px 18px;background:var(--leaf);color:#FFFFFF;cursor:pointer}
+button.prim:disabled{opacity:.6;cursor:wait}
+button.sec,a.sec{display:inline-block;font:inherit;font-weight:700;border:1.5px solid var(--line);border-radius:12px;padding:9px 14px;background:transparent;color:var(--leaf-2);cursor:pointer;text-decoration:none}
+button:focus-visible,a:focus-visible,.item:focus-visible{outline:3px solid var(--acai);outline-offset:3px}
+.erro{background:var(--bad-cl);color:var(--bad);border-radius:12px;padding:11px 14px;margin-top:12px;font-size:.95rem}
+.oculto{display:none !important}
+
+.barra{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.quem{color:var(--muted)}
+.contas{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.conta{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 16px;min-width:120px}
+.conta b{display:block;font-family:var(--display);font-size:1.7rem;line-height:1.1}
+.conta span{color:var(--muted);font-size:.88rem}
+.filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filtros input,.filtros select{margin:0;width:auto;flex:1;min-width:150px}
+.item{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px 15px;margin-bottom:8px;cursor:pointer}
+.item .top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.item .p{font-weight:700}
+.item .c{color:var(--muted);font-size:.88rem}
+.item .d{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.95rem}
+.st{font-size:.78rem;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap}
+.st.Aberto{background:var(--bad-cl);color:var(--bad)}
+.st.Em{background:var(--warn-cl);color:var(--warn)}
+.st.Concluído{background:var(--ok-cl);color:var(--ok)}
+.st.Cancelado{background:var(--bg);color:var(--muted)}
+.vazio{text-align:center;color:var(--muted);padding:28px 10px}
+
+.det .meta{color:var(--muted);font-size:.9rem;margin-bottom:12px}
+.det .desc{white-space:pre-wrap;margin:0 0 14px}
+.det img{max-width:100%;border-radius:12px;margin-bottom:14px}
+.contato{background:var(--bg);border-radius:14px;padding:12px 14px;margin-bottom:16px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.contato .acoes{display:flex;gap:8px;flex-wrap:wrap}
+.linha-tempo{border-left:3px solid var(--line);margin:8px 0 18px 6px;padding-left:16px}
+.ev{position:relative;padding-bottom:14px}
+.ev::before{content:"";position:absolute;left:-23px;top:6px;width:11px;height:11px;border-radius:50%;background:var(--leaf-2)}
+.ev.int::before{background:var(--acai)}
+.ev .q{font-size:.85rem;color:var(--muted)}
+.ev .m{white-space:pre-wrap}
+.tag-int{font-size:.75rem;font-weight:700;color:var(--acai)}
+.chk{display:flex;align-items:center;gap:8px;font-weight:400;margin-bottom:14px}
+.chk input{width:auto;margin:0}
+.abas{display:flex;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:5px;margin-bottom:14px;max-width:420px}
+.abas button{flex:1;border:0;background:transparent;font:inherit;font-weight:700;color:var(--muted);padding:9px;border-radius:10px;cursor:pointer}
+.abas button[aria-selected=true]{background:var(--leaf);color:#FFFFFF}
+.st.Solicitada{background:var(--warn-cl);color:var(--warn)}
+.st.Aprovada{background:#E4ECF7;color:#1D4E8F}
+.st.Confirmada{background:var(--ok-cl);color:var(--ok)}
+.st.Recusada{background:var(--bg);color:var(--muted)}
+.st.Quitada{background:var(--ok-cl);color:var(--ok)}
+.parcelas{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.parcela{background:var(--bg);border-radius:12px;padding:10px 12px;font-size:.92rem}
+.parcela b{display:block;font-size:1.05rem}
+.parcela.paga{background:var(--ok-cl);color:var(--ok)}
+.parcela.atrasada{background:var(--bad-cl);color:var(--bad)}
+.hist{white-space:pre-wrap;background:var(--bg);border-radius:12px;padding:10px 12px;font-size:.88rem;color:var(--muted);margin-bottom:16px}
+.acoes-res{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.bloq{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.bloq:last-child{border-bottom:0}
+.passou{opacity:.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="voltar" id="linkHub" href="#">‹ Voltar ao ACBT Fácil</a>
+  <h1>Painel da diretoria</h1>
+
+  <div class="card login" id="login">
+    <label for="email">E-mail</label>
+    <input id="email" type="email" autocomplete="username">
+    <label for="senha">Senha</label>
+    <input id="senha" type="password" autocomplete="current-password">
+    <button class="prim" id="btnEntrar">Entrar</button>
+    <div class="erro oculto" id="erroLogin" role="alert"></div>
+  </div>
+
+  <section id="app" class="oculto">
+    <div class="barra">
+      <span class="quem" id="quem"></span>
+      <span><button class="sec" id="btnAtualizar">Atualizar</button> <button class="sec" id="btnSair">Sair</button></span>
+    </div>
+    <div class="abas" role="tablist">
+      <button role="tab" aria-selected="true" data-sec="chamados">Chamados</button>
+      <button role="tab" aria-selected="false" data-sec="reservas">Reservas</button>
+    </div>
+
+    <div id="secChamados">
+    <div class="contas" id="contas"></div>
+
+    <div id="lista">
+      <div class="filtros">
+        <input type="search" id="busca" placeholder="Protocolo, nome, PNR ou palavra">
+        <select id="fStatus"></select>
+        <select id="fCat"></select>
+      </div>
+      <div id="itens"></div>
+    </div>
+
+    <div id="detalhe" class="card det oculto"></div>
+    </div>
+
+    <div id="secReservas" class="oculto">
+      <div class="contas" id="contasR"></div>
+      <div id="listaR">
+        <div class="filtros">
+          <select id="fStatusR">
+            <option value="pendentes">Precisam de ação</option>
+            <option value="futuras">Próximos eventos</option>
+            <option value="todas">Todas</option>
+          </select>
+        </div>
+        <div id="itensR"></div>
+
+        <div class="card" style="margin-top:18px">
+          <h2>Datas bloqueadas</h2>
+          <p class="c" style="color:var(--muted);margin:0 0 12px">Para eventos da associação ou manutenção. O dia aparece indisponível para os moradores.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input type="date" id="bData" style="width:auto;flex:1;min-width:150px;margin:0">
+            <input id="bMotivo" placeholder="Motivo (ex.: manutenção)" style="flex:2;min-width:180px;margin:0">
+            <button class="prim" id="btnBloquear">Bloquear data</button>
+          </div>
+          <div class="erro oculto" id="erroBloq" role="alert"></div>
+          <div id="bloqueios" style="margin-top:10px"></div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <h2>Agenda do Google</h2>
+          <p class="c" id="agendaStatus" style="margin:0 0 10px"></p>
+          <div id="agendaExt"></div>
+        </div>
+      </div>
+      <div id="detalheR" class="card det oculto"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const LINK_HUB = "https://script.google.com/macros/s/AKfycbxzgOl8IVkikR6DhFU0BcP_sR1y21PGR5VN3MmnPCoRgPlCqZovzY6W3aH5YKugw57obA/exec";
+document.getElementById("linkHub").href = LINK_HUB;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const stClasse = s => String(s || "").split(" ")[0];
+let token = "", chamados = [], STATUS = [], CATS = [], atual = "";
+
+function servidor(fn, ...args){
+  return new Promise((ok, erro) => google.script.run.withSuccessHandler(ok).withFailureHandler(erro)[fn](...args));
+}
+function erroLogin(msg){ $("erroLogin").textContent = msg; $("erroLogin").classList.remove("oculto"); }
+
+/* ---------- login ---------- */
+$("senha").addEventListener("keydown", e => { if(e.key === "Enter") entrar(); });
+$("btnEntrar").addEventListener("click", entrar);
+async function entrar(){
+  const btn = $("btnEntrar");
+  $("erroLogin").classList.add("oculto");
+  btn.disabled = true; btn.textContent = "Entrando…";
+  try{
+    const r = await servidor("entrarResponsavel", $("email").value, $("senha").value);
+    if(!r.ok) return erroLogin(r.msg);
+    token = r.token;
+    $("senha").value = "";
+    $("quem").textContent = "Conectado como " + r.nome;
+    $("login").classList.add("oculto");
+    $("app").classList.remove("oculto");
+    await carregar();
+    carregarReservas();
+    if(abaInicial === "reservas") mostrarSecao("reservas");
+  }catch(_){
+    erroLogin("Não foi possível entrar agora. Tente de novo.");
+  }finally{
+    btn.disabled = false; btn.textContent = "Entrar";
+  }
+}
+$("btnSair").addEventListener("click", () => location.reload());
+
+function sessaoExpirou(e){
+  if(!/SESSAO/.test(String(e && e.message || e))) return false;
+  token = "";
+  $("app").classList.add("oculto");
+  $("login").classList.remove("oculto");
+  erroLogin("Sua sessão expirou. Entre de novo.");
+  return true;
+}
+
+/* ---------- lista ---------- */
+async function carregar(){
+  try{
+    const r = await servidor("listarChamados", token);
+    chamados = r.chamados;
+    if(!STATUS.length){
+      STATUS = r.status; CATS = r.categorias;
+      $("fStatus").innerHTML = `<option value="abertos">Em aberto</option>` +
+        STATUS.map(s => `<option>${esc(s)}</option>`).join("") + `<option value="todos">Todos</option>`;
+      $("fCat").innerHTML = `<option value="">Todos os tipos</option>` + CATS.map(c => `<option>${esc(c)}</option>`).join("");
+    }
+    renderContas();
+    renderLista();
+  }catch(e){ if(!sessaoExpirou(e)) alert("Não foi possível carregar os chamados."); }
+}
+$("btnAtualizar").addEventListener("click", () => { carregar(); carregarReservas(); });
+
+function renderContas(){
+  const n = s => chamados.filter(c => c.status === s).length;
+  $("contas").innerHTML = [["Aberto","abertos"],["Em andamento","em andamento"],["Concluído","concluídos"]]
+    .map(([s, r]) => `<div class="conta"><b>${n(s)}</b><span>${r}</span></div>`).join("");
+}
+
+function renderLista(){
+  const q = $("busca").value.trim().toLowerCase();
+  const f = $("fStatus").value, cat = $("fCat").value;
+  let ls = chamados;
+  if(f === "abertos") ls = ls.filter(c => c.status === "Aberto" || c.status === "Em andamento");
+  else if(f !== "todos") ls = ls.filter(c => c.status === f);
+  if(cat) ls = ls.filter(c => c.categoria === cat);
+  if(q) ls = ls.filter(c => [c.protocolo, c.nome, c.pnr, c.categoria, c.local, c.descricao].join(" ").toLowerCase().includes(q));
+  $("itens").innerHTML = ls.length ? ls.map(c => `
+    <button class="item" data-p="${esc(c.protocolo)}">
+      <span class="top"><span class="p">${esc(c.protocolo)} · ${esc(c.categoria)}</span><span class="st ${esc(stClasse(c.status))}">${esc(c.status)}</span></span>
+      <span class="c">${esc(c.nome)} · PNR ${esc(c.pnr)} · ${esc(c.abertoEm)}${c.responsavel ? " · com " + esc(c.responsavel) : ""}</span>
+      <span class="d">${esc(c.descricao)}</span>
+    </button>`).join("")
+    : `<div class="vazio">Nenhum chamado neste filtro.</div>`;
+  $("itens").querySelectorAll(".item").forEach(b => b.addEventListener("click", () => abrirDetalhe(b.dataset.p)));
+}
+["busca","fStatus","fCat"].forEach(id => $(id).addEventListener("input", renderLista));
+
+/* ---------- detalhe ---------- */
+function linkWhats(c){
+  let n = String(c.telefone || "").replace(/\D/g, "");
+  if(n.length <= 11) n = "55" + n;
+  const txt = `Olá, ${c.nome.split(" ")[0]}. Aqui é da diretoria da ACBT, sobre o seu chamado ${c.protocolo} (${c.categoria}). Situação: ${c.status}.`;
+  return "https://wa.me/" + n + "?text=" + encodeURIComponent(txt);
+}
+
+async function abrirDetalhe(protocolo){
+  atual = protocolo;
+  const d = $("detalhe");
+  $("lista").classList.add("oculto");
+  d.classList.remove("oculto");
+  d.innerHTML = `<p>Carregando ${esc(protocolo)}…</p>`;
+  window.scrollTo(0, 0);
+  try{
+    const r = await servidor("detalheChamado", token, protocolo);
+    renderDetalhe(r);
+  }catch(e){ if(!sessaoExpirou(e)) voltarLista(); }
+}
+
+function renderDetalhe(r){
+  const d = $("detalhe");
+  if(!r.ok){ d.innerHTML = `<p>${esc(r.msg)}</p><button class="sec" id="btnVoltar">Voltar à lista</button>`;
+             $("btnVoltar").addEventListener("click", voltarLista); return; }
+  const c = r.chamado;
+  d.innerHTML = `
+    <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+      <h2 style="margin:0">${esc(c.protocolo)} · ${esc(c.categoria)}</h2>
+      <span class="st ${esc(stClasse(c.status))}">${esc(c.status)}</span>
+    </div>
+    <div class="meta">Aberto em ${esc(c.abertoEm)}${c.local ? " · " + esc(c.local) : ""}${c.responsavel ? " · responsável: " + esc(c.responsavel) : ""}</div>
+    <div class="contato">
+      <span><b>${esc(c.nome)}</b><br>PNR ${esc(c.pnr)} · ${esc(c.telefone)}</span>
+      <span class="acoes">
+        <a class="sec" href="tel:${esc(c.telefone)}">Ligar</a>
+        <a class="sec" href="${esc(linkWhats(c))}" target="_blank" rel="noopener">WhatsApp</a>
+      </span>
+    </div>
+    <p class="desc">${esc(c.descricao)}</p>
+    ${r.foto ? `<img src="${r.foto}" alt="Foto enviada pelo morador">` : ""}
+    <h2>Andamento</h2>
+    <div class="linha-tempo">${r.andamento.map(a => `
+      <div class="ev ${a.interna ? "int" : ""}"><div class="q">${esc(a.data)} · ${esc(a.autor)} · ${esc(a.status)}${a.interna ? ' · <span class="tag-int">nota interna</span>' : ""}</div>
+      <div class="m">${esc(a.mensagem)}</div></div>`).join("")}</div>
+
+    <h2>Atualizar</h2>
+    <label for="novoStatus">Situação</label>
+    <select id="novoStatus">${STATUS.map(s => `<option${s === c.status ? " selected" : ""}>${esc(s)}</option>`).join("")}</select>
+    <label for="msg">Mensagem para o morador</label>
+    <textarea id="msg" placeholder="ex.: Equipe agendada para quinta-feira de manhã."></textarea>
+    <label class="chk"><input type="checkbox" id="interna"> Nota interna (só a diretoria vê)</label>
+    <button class="prim" id="btnSalvar">Salvar atualização</button>
+    <button class="sec" id="btnVoltar" style="margin-left:6px">Voltar à lista</button>
+    <div class="erro oculto" id="erroDet" role="alert"></div>`;
+
+  $("btnVoltar").addEventListener("click", voltarLista);
+  $("interna").addEventListener("change", e => {
+    $("novoStatus").disabled = e.target.checked;
+    if(e.target.checked) $("novoStatus").value = c.status;
+    document.querySelector('label[for="msg"]').textContent = e.target.checked ? "Nota interna" : "Mensagem para o morador";
+  });
+  $("btnSalvar").addEventListener("click", async () => {
+    const btn = $("btnSalvar");
+    $("erroDet").classList.add("oculto");
+    btn.disabled = true; btn.textContent = "Salvando…";
+    try{
+      const r2 = await servidor("atualizarChamado", token, c.protocolo,
+        { status: $("novoStatus").value, mensagem: $("msg").value, interna: $("interna").checked });
+      if(!r2.ok){
+        $("erroDet").textContent = r2.msg; $("erroDet").classList.remove("oculto");
+        btn.disabled = false; btn.textContent = "Salvar atualização";
+        return;
+      }
+      renderDetalhe(r2);
+      carregar();
+    }catch(e){
+      if(!sessaoExpirou(e)){
+        $("erroDet").textContent = "Não foi possível salvar. Tente de novo.";
+        $("erroDet").classList.remove("oculto");
+        btn.disabled = false; btn.textContent = "Salvar atualização";
+      }
+    }
+  });
+}
+
+/* ======================= RESERVAS ======================= */
+let abaInicial = "", reservas = [], bloqueios = [], cfgR = {}, atualR = "";
+try{ google.script.url.getLocation(l => { abaInicial = (l.parameter && l.parameter.aba) || ""; }); }catch(_){}
+
+document.querySelectorAll(".abas button").forEach(b => b.addEventListener("click", () => mostrarSecao(b.dataset.sec)));
+function mostrarSecao(sec){
+  document.querySelectorAll(".abas button").forEach(o => o.setAttribute("aria-selected", String(o.dataset.sec === sec)));
+  $("secChamados").classList.toggle("oculto", sec !== "chamados");
+  $("secReservas").classList.toggle("oculto", sec !== "reservas");
+}
+
+async function carregarReservas(){
+  try{
+    aplicarReservas(await servidor("listarReservas", token));
+  }catch(e){ if(!sessaoExpirou(e)) $("itensR").innerHTML = '<div class="vazio">Não consegui carregar as reservas.</div>'; }
+}
+function aplicarReservas(r){
+  reservas = r.reservas; bloqueios = r.bloqueios; cfgR = r.config;
+  const conectada = /^conectada/.test(r.agenda || "");
+  $("agendaStatus").innerHTML = conectada
+    ? `<span style="color:var(--ok);font-weight:700">● ${esc(r.agenda)}</span><br><span style="color:var(--muted)">Cada reserva aparece na agenda, e eventos marcados direto nela ocupam o dia no app.</span>`
+    : `<span style="color:var(--bad);font-weight:700">● Agenda ${esc(r.agenda || "não configurada")}</span><br><span style="color:var(--muted)">Informe o e-mail da agenda na aba Configuração da planilha de reservas.</span>`;
+  const ext = r.agendaExternos || [];
+  $("agendaExt").innerHTML = !conectada ? "" : ext.length
+    ? `<p class="c" style="color:var(--muted);margin:0 0 6px">Dias ocupados por eventos marcados direto na agenda (fora do app):</p>` +
+      ext.map(e => `<div class="bloq"><span><b style="text-transform:capitalize">${esc(e.semana)}, ${esc(e.dataBr)}</b> · ${esc(e.titulo)}</span></div>`).join("")
+    : `<p class="c" style="color:var(--muted);margin:0">Nenhum evento marcado fora do app nos próximos meses.</p>`;
+  const n = s => reservas.filter(x => x.status === s && !x.passou).length;
+  const atrasados = reservas.filter(x => x.restanteAtrasado).length;
+  $("contasR").innerHTML = [["Solicitada","aguardando aprovação"],["Aprovada","aguardando sinal"],["Confirmada","aguardando restante"]]
+    .map(([s, t]) => `<div class="conta"><b>${n(s)}</b><span>${t}</span></div>`).join("") +
+    (atrasados ? `<div class="conta" style="border-color:var(--bad)"><b style="color:var(--bad)">${atrasados}</b><span>restante atrasado</span></div>` : "");
+  renderListaR();
+  renderBloqueios();
+  if(atualR && !$("detalheR").classList.contains("oculto")) abrirReserva(atualR);
+}
+
+function renderListaR(){
+  const f = $("fStatusR").value;
+  let ls = reservas;
+  if(f === "pendentes") ls = ls.filter(x => ((x.status === "Solicitada" || x.status === "Aprovada") && !x.passou) || x.status === "Confirmada")
+                             .sort((a, b) => a.data.localeCompare(b.data));
+  if(f === "futuras") ls = ls.filter(x => (x.status === "Confirmada" || x.status === "Quitada") && !x.passou)
+                            .sort((a, b) => a.data.localeCompare(b.data));
+  $("itensR").innerHTML = ls.length ? ls.map(x => `
+    <button class="item ${x.passou ? "passou" : ""}" data-r="${esc(x.protocolo)}">
+      <span class="top"><span class="p" style="text-transform:capitalize">${esc(x.semana)}, ${esc(x.dataBr)}</span><span class="st ${esc(x.status)}">${esc(x.statusTexto)}</span></span>
+      <span class="c">${esc(x.protocolo)} · ${esc(x.nome)} · PNR ${esc(x.pnr)} · ${esc(x.tipo)}${x.restanteAtrasado ? ' · <b style="color:var(--bad)">restante atrasado</b>' : ""}</span>
+    </button>`).join("")
+    : '<div class="vazio">Nenhuma reserva neste filtro.</div>';
+  $("itensR").querySelectorAll(".item").forEach(b => b.addEventListener("click", () => abrirReserva(b.dataset.r)));
+}
+$("fStatusR").addEventListener("change", renderListaR);
+
+function renderBloqueios(){
+  $("bloqueios").innerHTML = bloqueios.length ? bloqueios.map(b => `
+    <div class="bloq"><span><b style="text-transform:capitalize">${esc(b.semana)}, ${esc(b.dataBr)}</b> · ${esc(b.motivo)}</span>
+    <button class="sec" data-desbloq="${esc(b.data)}">Desbloquear</button></div>`).join("")
+    : '<p class="c" style="color:var(--muted)">Nenhuma data bloqueada.</p>';
+  $("bloqueios").querySelectorAll("[data-desbloq]").forEach(b => b.addEventListener("click", async () => {
+    b.disabled = true;
+    try{ aplicarReservas(await servidor("desbloquearData", token, b.dataset.desbloq)); }
+    catch(e){ if(!sessaoExpirou(e)) b.disabled = false; }
+  }));
+}
+$("btnBloquear").addEventListener("click", async () => {
+  const btn = $("btnBloquear");
+  $("erroBloq").classList.add("oculto");
+  btn.disabled = true;
+  try{
+    const r = await servidor("bloquearData", token, $("bData").value, $("bMotivo").value);
+    if(!r.ok){ $("erroBloq").textContent = r.msg; $("erroBloq").classList.remove("oculto"); return; }
+    $("bData").value = ""; $("bMotivo").value = "";
+    aplicarReservas(r);
+  }catch(e){ sessaoExpirou(e); }
+  finally{ btn.disabled = false; }
+});
+
+function whatsReserva(x){
+  let n = String(x.telefone || "").replace(/\D/g, "");
+  if(n.length <= 11) n = "55" + n;
+  const nome = x.nome.split(" ")[0];
+  const quando = `${x.semana}, ${x.dataBr}`;
+  const reais = v => "R$ " + v.toFixed(2).replace(".", ",");
+  const pix = cfgR.pix ? " (chave: " + cfgR.pix + ")" : "";
+  const txt = {
+    Solicitada: `Olá, ${nome}. Aqui é da diretoria da ACBT. Recebemos seu pedido de reserva da área de lazer para ${quando} (${x.protocolo}).`,
+    Aprovada: `Olá, ${nome}. Sua reserva da área de lazer para ${quando} (${x.protocolo}) foi aprovada. Para confirmar, pague o sinal de ${reais(x.sinal)} por PIX${pix} e envie o comprovante por aqui. Os ${reais(x.restante)} restantes podem ser pagos até o dia do evento.`,
+    Confirmada: `Olá, ${nome}. Recebemos o sinal e sua reserva da área de lazer para ${quando} (${x.protocolo}) está confirmada. Falta pagar ${reais(x.restante)} até o dia do evento, por PIX${pix}.`,
+    Quitada: `Olá, ${nome}. Pagamento completo recebido. Sua reserva da área de lazer para ${quando} (${x.protocolo}) está confirmada. Bom evento!`,
+    Recusada: `Olá, ${nome}. Não foi possível aprovar a reserva da área de lazer para ${quando} (${x.protocolo}).${x.obs ? " Motivo: " + x.obs : ""}`,
+    Cancelada: `Olá, ${nome}. A reserva da área de lazer para ${quando} (${x.protocolo}) foi cancelada.${x.obs ? " Motivo: " + x.obs : ""}`
+  }[x.status] || "";
+  return "https://wa.me/" + n + "?text=" + encodeURIComponent(txt);
+}
+
+function abrirReserva(protocolo){
+  const x = reservas.find(r => r.protocolo === protocolo);
+  if(!x) return voltarListaR();
+  atualR = protocolo;
+  const d = $("detalheR");
+  const reaisP = v => "R$ " + v.toFixed(2).replace(".", ",");
+  const parcela = (nome, valor, pagoEm, forma, prazo, atrasada) => `
+    <div class="parcela ${pagoEm ? "paga" : atrasada ? "atrasada" : ""}">${nome}<b>${reaisP(valor)}</b>
+      ${pagoEm ? `pago em ${esc(pagoEm)} (${esc(forma)})` : atrasada ? "atrasado" : esc(prazo)}</div>`;
+  $("listaR").classList.add("oculto");
+  d.classList.remove("oculto");
+  const botoes = {
+    Solicitada: `<button class="prim" data-acao="aprovar">Aprovar</button><button class="sec" data-acao="recusar">Recusar</button>`,
+    Aprovada: `<button class="prim" data-acao="pagamento" data-parcela="sinal">Registrar sinal (${reaisP(x.sinal)})</button>
+               <button class="sec" data-acao="pagamento" data-parcela="total">Pagou tudo (${reaisP(x.taxa)})</button>
+               <button class="sec" data-acao="recusar">Recusar</button>`,
+    Confirmada: `<button class="prim" data-acao="pagamento" data-parcela="restante">Registrar restante (${reaisP(x.restante)})</button>
+                 <button class="sec" data-acao="cancelar">Cancelar reserva</button>`,
+    Quitada: `<button class="sec" data-acao="cancelar">Cancelar reserva</button>`
+  }[x.status] || "";
+  d.innerHTML = `
+    <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+      <h2 style="margin:0;text-transform:capitalize">${esc(x.semana)}, ${esc(x.dataBr)}</h2>
+      <span class="st ${esc(x.status)}">${esc(x.statusTexto)}</span>
+    </div>
+    <div class="meta">${esc(x.protocolo)} · pedido em ${esc(x.solicitadaEm)}${x.passou ? " · data já passou" : ""}</div>
+    <div class="contato">
+      <span><b>${esc(x.nome)}</b><br>PNR ${esc(x.pnr)} · SARAM ${esc(x.saram)} · ${esc(x.telefone)}</span>
+      <span class="acoes">
+        <a class="sec" href="tel:${esc(x.telefone)}">Ligar</a>
+        <a class="sec" href="${esc(whatsReserva(x))}" target="_blank" rel="noopener">WhatsApp</a>
+      </span>
+    </div>
+    <p class="desc"><b>${esc(x.tipo)}</b>${x.responsavel ? " · responsável: " + esc(x.responsavel) : ""}<br>
+      Evento: ${esc(x.evento || "não informado")} · Convidados: ${esc(x.convidados || "não informado")}</p>
+    <h2>Pagamento · ${reaisP(x.taxa)}</h2>
+    <div class="parcelas">
+      ${parcela("Sinal (50%)", x.sinal, x.sinalPagoEm, x.sinalForma, "na aprovação", false)}
+      ${parcela("Restante (50%)", x.restante, x.restantePagoEm, x.restanteForma, "até " + x.dataBr, x.restanteAtrasado)}
+    </div>
+    <h2>Histórico</h2>
+    <div class="hist">${esc(x.historico)}</div>
+    ${botoes ? `
+      <div id="camposPag" class="oculto">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <select id="pForma" style="width:auto;flex:1"><option>PIX</option><option>Dinheiro</option></select>
+          <input type="date" id="pData" style="width:auto;flex:1">
+        </div>
+      </div>
+      <label for="motivoR">Motivo <span style="font-weight:400;color:var(--muted)">(obrigatório para recusar ou cancelar)</span></label>
+      <textarea id="motivoR" style="min-height:70px"></textarea>
+      <div class="acoes-res">${botoes}</div>` : ""}
+    <button class="sec" id="btnVoltarR" style="margin-top:12px">Voltar à lista</button>
+    <div class="erro oculto" id="erroR" role="alert"></div>`;
+  $("btnVoltarR").addEventListener("click", voltarListaR);
+  if($("pData")) $("pData").value = new Date().toISOString().slice(0, 10);
+  if(x.status === "Aprovada" || x.status === "Confirmada") $("camposPag").classList.remove("oculto");
+  d.querySelectorAll("[data-acao]").forEach(b => b.addEventListener("click", async () => {
+    $("erroR").classList.add("oculto");
+    d.querySelectorAll("[data-acao]").forEach(o => o.disabled = true);
+    try{
+      const r = await servidor("decidirReserva", token, x.protocolo, b.dataset.acao, {
+        motivo: $("motivoR").value, parcela: b.dataset.parcela || "",
+        forma: $("pForma") ? $("pForma").value : "", dataPagamento: $("pData") ? $("pData").value : ""
+      });
+      if(!r.ok){
+        $("erroR").textContent = r.msg; $("erroR").classList.remove("oculto");
+        d.querySelectorAll("[data-acao]").forEach(o => o.disabled = false);
+        return;
+      }
+      aplicarReservas(r);
+    }catch(e){
+      if(!sessaoExpirou(e)){
+        $("erroR").textContent = "Não foi possível salvar. Tente de novo."; $("erroR").classList.remove("oculto");
+        d.querySelectorAll("[data-acao]").forEach(o => o.disabled = false);
+      }
+    }
+  }));
+  window.scrollTo(0, 0);
+}
+function voltarListaR(){
+  atualR = "";
+  $("detalheR").classList.add("oculto");
+  $("listaR").classList.remove("oculto");
+}
+
+function voltarLista(){
+  $("detalhe").classList.add("oculto");
+  $("lista").classList.remove("oculto");
+}
+
+/* ---------- App instalado: troca de página sem sair do app ---------- */
+(function(){
+  const EXEC_APP = "https://script.google.com/macros/s/AKfycbxzgOl8IVkikR6DhFU0BcP_sR1y21PGR5VN3MmnPCoRgPlCqZovzY6W3aH5YKugw57obA/exec";
+  let dentroDoApp = false;
+  try{ google.script.url.getLocation(l => { dentroDoApp = !!(l.parameter && l.parameter.app === "1"); }); }catch(_){}
+  document.addEventListener("click", e => {
+    const a = e.target.closest && e.target.closest("a[href]");
+    if(!a || !dentroDoApp) return;
+    const href = a.getAttribute("href") || "";
+    if(href.indexOf(EXEC_APP) !== 0) return;
+    e.preventDefault();
+    window.top.postMessage({ acbt: "ir", url: href + (href.indexOf("?") > -1 ? "&" : "?") + "app=1" }, "*");
+  }, true);
+})();
+</script>
+</body>
+</html>

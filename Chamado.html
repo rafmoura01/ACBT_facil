@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F6FC; --surface:#FFFFFF; --ink:#0A1A3A; --muted:#4A5A78; --line:#D6E0F0;
+  --leaf:#0038A8; --leaf-2:#1E64C8; --mango:#F7B500; --acai:#E8711A;
+  --ok:#1E6B4A; --ok-cl:#E1F0E8; --warn:#8A5D0E; --warn-cl:#F8EDD6; --bad:#9A2A35; --bad-cl:#F8E4E6;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5}
+.wrap{max-width:600px;margin:0 auto;padding:22px 18px 48px}
+.voltar{display:inline-block;color:var(--muted);font-size:.92rem;margin-bottom:16px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(1.9rem,7vw,2.5rem);line-height:1.05;letter-spacing:-.02em;margin:0 0 16px}
+h2{font-family:var(--display);font-size:1.25rem;margin:0 0 10px}
+.abas{display:flex;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:5px;margin-bottom:18px}
+.abas button{flex:1;border:0;background:transparent;font:inherit;font-weight:700;color:var(--muted);padding:10px;border-radius:10px;cursor:pointer}
+.abas button[aria-selected=true]{background:var(--leaf);color:#FFFFFF}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px}
+label{display:block;font-weight:700;margin:0 0 6px}
+.dica{font-weight:400;color:var(--muted);font-size:.88rem}
+input,textarea,select{width:100%;font:inherit;padding:11px 13px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);margin-bottom:16px}
+textarea{min-height:120px;resize:vertical}
+input:focus,textarea:focus{outline:3px solid var(--mango);outline-offset:1px;border-color:var(--leaf-2)}
+.fila{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:.95rem;padding:8px 13px;border-radius:99px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--leaf);border-color:var(--leaf);color:#FFFFFF}
+.foto-prev{max-width:100%;border-radius:12px;margin:-6px 0 16px;display:block}
+button.prim{width:100%;font:inherit;font-weight:700;border:0;border-radius:12px;padding:14px;background:var(--leaf);color:#FFFFFF;cursor:pointer}
+button.prim:disabled{opacity:.6;cursor:wait}
+button.sec{width:100%;font:inherit;font-weight:700;border:1.5px solid var(--line);border-radius:12px;padding:12px;background:transparent;color:var(--leaf-2);cursor:pointer;margin-top:10px}
+button:focus-visible,.chip:focus-visible,.item:focus-visible{outline:3px solid var(--acai);outline-offset:3px}
+.erro{background:var(--bad-cl);color:var(--bad);border-radius:12px;padding:12px 14px;margin-top:14px;font-size:.95rem}
+.aviso{color:var(--muted);font-size:.86rem;margin:-4px 0 16px}
+.oculto{display:none !important}
+.hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
+
+.sucesso{text-align:center}
+.sucesso .proto{font-family:var(--display);font-weight:800;font-size:2.6rem;letter-spacing:-.01em;color:var(--leaf);margin:6px 0}
+
+.filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filtros input{flex:1;min-width:150px;margin:0}
+.item{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:8px;cursor:pointer}
+.item .top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px}
+.item .p{font-weight:700}
+.item .c{color:var(--muted);font-size:.88rem}
+.item .d{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.95rem}
+.st{font-size:.78rem;font-weight:700;padding:3px 10px;border-radius:99px;white-space:nowrap}
+.st.Aberto{background:var(--bad-cl);color:var(--bad)}
+.st.Em{background:var(--warn-cl);color:var(--warn)}
+.st.Concluído{background:var(--ok-cl);color:var(--ok)}
+.st.Cancelado{background:var(--bg);color:var(--muted)}
+.vazio{text-align:center;color:var(--muted);padding:28px 10px}
+
+.det .meta{color:var(--muted);font-size:.9rem;margin-bottom:12px}
+.det .desc{white-space:pre-wrap;margin:0 0 14px}
+.det img{max-width:100%;border-radius:12px;margin-bottom:14px}
+.linha-tempo{border-left:3px solid var(--line);margin:8px 0 0 6px;padding-left:16px}
+.ev{position:relative;padding-bottom:14px}
+.ev::before{content:"";position:absolute;left:-23px;top:6px;width:11px;height:11px;border-radius:50%;background:var(--leaf-2)}
+.ev .q{font-size:.85rem;color:var(--muted)}
+.ev .m{white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="voltar" id="linkHub" href="#">‹ Voltar ao ACBT Fácil</a>
+  <h1>Chamados</h1>
+
+  <div class="abas" role="tablist">
+    <button role="tab" aria-selected="true" data-aba="abrir">Abrir chamado</button>
+    <button role="tab" aria-selected="false" data-aba="acompanhar">Acompanhar</button>
+  </div>
+
+  <!-- ABRIR -->
+  <section id="abaAbrir">
+    <div class="card" id="formAbrir">
+      <div class="fila">
+        <div><label for="nome">Seu nome</label><input id="nome" autocomplete="name"></div>
+        <div><label for="pnr">PNR</label><input id="pnr" placeholder="ex.: 12-B"></div>
+      </div>
+      <label for="tel">Telefone com DDD</label>
+      <input id="tel" inputmode="tel" placeholder="(91) 90000-0000" autocomplete="tel">
+
+      <label>Tipo do chamado</label>
+      <div class="chips" id="chips"><span class="dica">Carregando…</span></div>
+
+      <label for="local">Onde <span class="dica">opcional</span></label>
+      <input id="local" placeholder="ex.: poste em frente ao PNR 14">
+
+      <label for="desc">O que está acontecendo</label>
+      <textarea id="desc" placeholder="Descreva o problema"></textarea>
+
+      <label for="foto">Foto <span class="dica">opcional</span></label>
+      <input id="foto" type="file" accept="image/*">
+      <img id="fotoPrev" class="foto-prev oculto" alt="Prévia da foto">
+
+      <div class="hp" aria-hidden="true"><label for="site">Site</label><input id="site" tabindex="-1" autocomplete="off"></div>
+
+      <p class="aviso">Só você e a diretoria veem este chamado. Para acompanhar depois, use este mesmo telefone e PNR na aba Acompanhar.</p>
+      <button class="prim" id="btnEnviar">Enviar chamado</button>
+      <div class="erro oculto" id="erroAbrir" role="alert"></div>
+    </div>
+
+    <div class="card sucesso oculto" id="okAbrir" aria-live="polite">
+      <p>Chamado enviado. Seu protocolo é</p>
+      <div class="proto" id="proto"></div>
+      <p class="aviso" style="margin:0 0 6px">Guarde este número. A diretoria foi avisada e pode entrar em contato pelo telefone informado.</p>
+      <button class="prim" id="btnIrAcompanhar">Acompanhar chamados</button>
+      <button class="sec" id="btnOutro">Abrir outro chamado</button>
+    </div>
+  </section>
+
+  <!-- ACOMPANHAR -->
+  <section id="abaAcompanhar" class="oculto">
+    <div class="card" id="loginMorador">
+      <h2>Seus chamados</h2>
+      <p class="aviso" style="margin:0 0 14px">Informe o telefone e o PNR que você usou ao abrir o chamado.</p>
+      <label for="telA">Telefone com DDD</label>
+      <input id="telA" inputmode="tel" placeholder="(91) 90000-0000" autocomplete="tel">
+      <label for="pnrA">PNR</label>
+      <input id="pnrA" placeholder="ex.: 12-B">
+      <button class="prim" id="btnEntrar">Ver chamados</button>
+      <div class="erro oculto" id="erroLogin" role="alert"></div>
+    </div>
+
+    <div id="lista" class="oculto">
+      <div class="filtros">
+        <input type="search" id="busca" placeholder="Buscar protocolo ou palavra">
+        <select id="fStatus" style="width:auto;margin:0">
+          <option value="todos">Todos</option>
+          <option value="abertos">Em aberto</option>
+          <option value="Concluído">Concluídos</option>
+        </select>
+      </div>
+      <div id="itens"></div>
+    </div>
+
+    <div id="detalhe" class="card det oculto"></div>
+  </section>
+</div>
+
+<script>
+const LINK_HUB = "https://script.google.com/macros/s/AKfycbxzgOl8IVkikR6DhFU0BcP_sR1y21PGR5VN3MmnPCoRgPlCqZovzY6W3aH5YKugw57obA/exec";
+document.getElementById("linkHub").href = LINK_HUB;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const stClasse = s => String(s || "").split(" ")[0];
+let categoria = "", fotoDados = "", token = "", chamados = [];
+
+function servidor(fn, ...args){
+  return new Promise((ok, erro) => google.script.run.withSuccessHandler(ok).withFailureHandler(erro)[fn](...args));
+}
+function mostrarErro(id, msg){ $(id).textContent = msg; $(id).classList.remove("oculto"); }
+
+/* ---------- abas ---------- */
+document.querySelectorAll(".abas button").forEach(b => b.addEventListener("click", () => irPara(b.dataset.aba)));
+function irPara(aba){
+  document.querySelectorAll(".abas button").forEach(o => o.setAttribute("aria-selected", String(o.dataset.aba === aba)));
+  $("abaAbrir").classList.toggle("oculto", aba !== "abrir");
+  $("abaAcompanhar").classList.toggle("oculto", aba !== "acompanhar");
+}
+
+/* ---------- máscara de telefone: (91) 98053-1851 ---------- */
+function mascaraTelefone(v){
+  const d = String(v || "").replace(/\D/g, "").slice(0, 11);
+  if(d.length <= 2) return d.length ? "(" + d : "";
+  if(d.length <= 6) return `(${d.slice(0,2)}) ${d.slice(2)}`;
+  if(d.length <= 10) return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
+  return `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`;
+}
+["tel","telA"].forEach(id => {
+  const campo = $(id);
+  campo.setAttribute("maxlength", "15");
+  campo.addEventListener("input", () => { campo.value = mascaraTelefone(campo.value); });
+});
+
+/* ---------- abrir ---------- */
+servidor("categoriasChamado").then(cats => {
+  $("chips").innerHTML = cats.map(c => `<button type="button" class="chip" aria-pressed="false" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
+  $("chips").querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
+    categoria = b.dataset.cat;
+    $("chips").querySelectorAll(".chip").forEach(o => o.setAttribute("aria-pressed", String(o === b)));
+  }));
+}).catch(() => { $("chips").innerHTML = '<span class="dica">Não consegui carregar os tipos. Recarregue a página.</span>'; });
+
+function reduzirFoto(arquivo){
+  return new Promise((ok, erro) => {
+    const img = new Image(), url = URL.createObjectURL(arquivo);
+    img.onload = () => {
+      const k = Math.min(1, 1280 / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      ok(c.toDataURL("image/jpeg", 0.75));
+    };
+    img.onerror = () => erro(new Error("foto"));
+    img.src = url;
+  });
+}
+$("foto").addEventListener("change", async e => {
+  fotoDados = "";
+  $("fotoPrev").classList.add("oculto");
+  const f = e.target.files[0];
+  if(!f) return;
+  try{
+    fotoDados = await reduzirFoto(f);
+    $("fotoPrev").src = fotoDados;
+    $("fotoPrev").classList.remove("oculto");
+  }catch(_){
+    mostrarErro("erroAbrir", "Não consegui ler essa foto. Tente outra imagem ou envie sem foto.");
+  }
+});
+
+$("btnEnviar").addEventListener("click", async () => {
+  const btn = $("btnEnviar");
+  $("erroAbrir").classList.add("oculto");
+  if(!categoria) return mostrarErro("erroAbrir", "Escolha o tipo do chamado.");
+  btn.disabled = true; btn.textContent = "Enviando…";
+  try{
+    const r = await servidor("abrirChamado", {
+      nome: $("nome").value, pnr: $("pnr").value, telefone: $("tel").value,
+      categoria, local: $("local").value, descricao: $("desc").value,
+      foto: fotoDados, site: $("site").value
+    });
+    if(!r.ok){ mostrarErro("erroAbrir", r.msg); return; }
+    $("proto").textContent = r.protocolo;
+    token = r.token || token;
+    $("telA").value = $("tel").value; $("pnrA").value = $("pnr").value;
+    $("formAbrir").classList.add("oculto");
+    $("okAbrir").classList.remove("oculto");
+    window.scrollTo(0, 0);
+  }catch(_){
+    mostrarErro("erroAbrir", "Não foi possível enviar agora. Verifique a internet e tente de novo.");
+  }finally{
+    btn.disabled = false; btn.textContent = "Enviar chamado";
+  }
+});
+$("btnOutro").addEventListener("click", () => {
+  ["local","desc","foto"].forEach(id => $(id).value = "");
+  fotoDados = ""; categoria = "";
+  $("fotoPrev").classList.add("oculto");
+  $("chips").querySelectorAll(".chip").forEach(o => o.setAttribute("aria-pressed", "false"));
+  $("okAbrir").classList.add("oculto");
+  $("formAbrir").classList.remove("oculto");
+});
+$("btnIrAcompanhar").addEventListener("click", () => {
+  irPara("acompanhar");
+  if(token){ $("loginMorador").classList.add("oculto"); $("detalhe").classList.add("oculto"); carregarLista(); }
+});
+
+/* ---------- acompanhar ---------- */
+$("pnrA").addEventListener("keydown", e => { if(e.key === "Enter") entrar(); });
+$("btnEntrar").addEventListener("click", entrar);
+
+async function entrar(){
+  const btn = $("btnEntrar");
+  $("erroLogin").classList.add("oculto");
+  btn.disabled = true; btn.textContent = "Conferindo…";
+  try{
+    const r = await servidor("entrarMorador", $("telA").value, $("pnrA").value);
+    if(!r.ok){ mostrarErro("erroLogin", r.msg); return; }
+    token = r.token;
+    $("loginMorador").classList.add("oculto");
+    await carregarLista();
+  }catch(_){
+    mostrarErro("erroLogin", "Não foi possível conferir agora. Tente de novo.");
+  }finally{
+    btn.disabled = false; btn.textContent = "Ver chamados";
+  }
+}
+
+function sessaoExpirou(e){
+  if(!/SESSAO/.test(String(e && e.message || e))) return false;
+  token = "";
+  ["lista","detalhe"].forEach(id => $(id).classList.add("oculto"));
+  $("loginMorador").classList.remove("oculto");
+  mostrarErro("erroLogin", "Sua sessão expirou. Informe o telefone e o PNR de novo.");
+  return true;
+}
+
+async function carregarLista(){
+  try{
+    const r = await servidor("listarChamados", token);
+    chamados = r.chamados;
+    $("lista").classList.remove("oculto");
+    renderLista();
+  }catch(e){ if(!sessaoExpirou(e)) alert("Não foi possível carregar os chamados."); }
+}
+
+function renderLista(){
+  const q = $("busca").value.trim().toLowerCase();
+  const f = $("fStatus").value;
+  let ls = chamados;
+  if(f === "abertos") ls = ls.filter(c => c.status === "Aberto" || c.status === "Em andamento");
+  else if(f !== "todos") ls = ls.filter(c => c.status === f);
+  if(q) ls = ls.filter(c => (c.protocolo + " " + c.categoria + " " + c.local + " " + c.descricao).toLowerCase().includes(q));
+  $("itens").innerHTML = ls.length ? ls.map(c => `
+    <button class="item" data-p="${esc(c.protocolo)}">
+      <span class="top"><span class="p">${esc(c.protocolo)} · ${esc(c.categoria)}</span><span class="st ${esc(stClasse(c.status))}">${esc(c.status)}</span></span>
+      <span class="c">${esc(c.abertoEm)}${c.local ? " · " + esc(c.local) : ""}</span>
+      <span class="d">${esc(c.descricao)}</span>
+    </button>`).join("")
+    : `<div class="vazio">Nenhum chamado seu neste filtro.</div>`;
+  $("itens").querySelectorAll(".item").forEach(b => b.addEventListener("click", () => abrirDetalhe(b.dataset.p)));
+}
+$("busca").addEventListener("input", renderLista);
+$("fStatus").addEventListener("change", renderLista);
+
+async function abrirDetalhe(protocolo){
+  const d = $("detalhe");
+  $("lista").classList.add("oculto");
+  d.classList.remove("oculto");
+  d.innerHTML = `<p class="dica">Carregando ${esc(protocolo)}…</p>`;
+  window.scrollTo(0, 0);
+  try{
+    const r = await servidor("detalheChamado", token, protocolo);
+    if(!r.ok){ d.innerHTML = `<p>${esc(r.msg)}</p><button class="sec" id="btnVoltarLista">Voltar à lista</button>`; }
+    else{
+      const c = r.chamado;
+      d.innerHTML = `
+        <div class="top" style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+          <h2 style="margin:0">${esc(c.protocolo)} · ${esc(c.categoria)}</h2>
+          <span class="st ${esc(stClasse(c.status))}">${esc(c.status)}</span>
+        </div>
+        <div class="meta">Aberto em ${esc(c.abertoEm)}${c.local ? " · " + esc(c.local) : ""}</div>
+        <p class="desc">${esc(c.descricao)}</p>
+        ${r.foto ? `<img src="${r.foto}" alt="Foto enviada no chamado">` : ""}
+        <h2>Andamento</h2>
+        <div class="linha-tempo">${r.andamento.map(a => `
+          <div class="ev"><div class="q">${esc(a.data)} · ${esc(a.autor)} · ${esc(a.status)}</div><div class="m">${esc(a.mensagem)}</div></div>`).join("")}</div>
+        <button class="sec" id="btnVoltarLista">Voltar à lista</button>`;
+    }
+    $("btnVoltarLista").addEventListener("click", () => { d.classList.add("oculto"); $("lista").classList.remove("oculto"); });
+  }catch(e){
+    if(!sessaoExpirou(e)){ d.classList.add("oculto"); $("lista").classList.remove("oculto"); alert("Não foi possível abrir o chamado."); }
+  }
+}
+
+/* ---------- App instalado: troca de página sem sair do app ---------- */
+(function(){
+  const EXEC_APP = "https://script.google.com/macros/s/AKfycbxzgOl8IVkikR6DhFU0BcP_sR1y21PGR5VN3MmnPCoRgPlCqZovzY6W3aH5YKugw57obA/exec";
+  let dentroDoApp = false;
+  try{ google.script.url.getLocation(l => { dentroDoApp = !!(l.parameter && l.parameter.app === "1"); }); }catch(_){}
+  document.addEventListener("click", e => {
+    const a = e.target.closest && e.target.closest("a[href]");
+    if(!a || !dentroDoApp) return;
+    const href = a.getAttribute("href") || "";
+    if(href.indexOf(EXEC_APP) !== 0) return;
+    e.preventDefault();
+    window.top.postMessage({ acbt: "ir", url: href + (href.indexOf("?") > -1 ? "&" : "?") + "app=1" }, "*");
+  }, true);
+})();
+</script>
+</body>
+</html>

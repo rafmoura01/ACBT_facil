@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F6FC; --surface:#FFFFFF; --ink:#0A1A3A; --muted:#4A5A78; --line:#D6E0F0;
+  --leaf:#0038A8; --leaf-2:#1E64C8; --mango:#F7B500; --acai:#E8711A;
+  --ok:#1E6B4A; --ok-cl:#E1F0E8; --warn:#8A5D0E; --warn-cl:#F8EDD6; --bad:#9A2A35; --bad-cl:#F8E4E6;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.5}
+.wrap{max-width:560px;margin:0 auto;padding:22px 18px 48px}
+.voltar{display:inline-block;color:var(--muted);font-size:.92rem;margin-bottom:18px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(1.9rem,7vw,2.5rem);line-height:1.05;letter-spacing:-.02em;margin:0 0 8px}
+.intro{color:var(--muted);margin:0 0 22px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px}
+label{display:block;font-weight:700;margin-bottom:6px}
+.dica{display:block;font-weight:400;color:var(--muted);font-size:.88rem}
+input{width:100%;font:inherit;font-size:1.25rem;letter-spacing:.08em;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);margin-bottom:16px}
+input:focus{outline:3px solid var(--mango);outline-offset:1px;border-color:var(--leaf-2)}
+button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:14px 18px;cursor:pointer;width:100%}
+.prim{background:var(--leaf);color:#FFFFFF}
+.prim:disabled{opacity:.6;cursor:wait}
+.sec{background:transparent;color:var(--leaf-2);border:1.5px solid var(--line);margin-top:18px}
+button:focus-visible{outline:3px solid var(--acai);outline-offset:3px}
+.erro{background:var(--bad-cl);color:var(--bad);border-radius:12px;padding:12px 14px;margin-top:14px;font-size:.95rem}
+.privado{color:var(--muted);font-size:.85rem;margin-top:14px}
+.oculto{display:none !important}
+
+.quem{font-family:var(--display);font-weight:700;font-size:1.35rem;line-height:1.2}
+.quem small{display:block;font-family:var(--body);font-weight:400;font-size:.9rem;color:var(--muted)}
+.status{border-radius:18px;padding:18px;margin:16px 0}
+.status.ok{background:var(--ok-cl);color:var(--ok)}
+.status.bad{background:var(--bad-cl);color:var(--bad)}
+.status b{display:block;font-family:var(--display);font-size:1.5rem;line-height:1.15}
+.status span{font-size:.97rem}
+.bloco{margin-top:22px}
+.bloco h2{font-family:var(--display);font-size:1.2rem;margin:0 0 10px}
+.pend{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.pend:last-child{border-bottom:0}
+.pend .m{font-weight:700}
+.pend .d{display:block;color:var(--muted);font-size:.86rem}
+.pend .v{font-weight:700;white-space:nowrap;color:var(--bad)}
+.emdia{color:var(--ok);font-weight:700}
+.carne{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
+.mes{width:46px;height:46px;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.72rem;line-height:1.1;border:1px solid transparent}
+.mes b{font-size:.85rem}
+.mes.pago,.mes.pix,.mes.misto{background:var(--ok-cl);color:var(--ok)}
+.mes.parcial,.mes.naoproc{background:var(--warn-cl);color:var(--warn)}
+.mes.semreg{background:var(--bad-cl);color:var(--bad)}
+.mes.aguardando{background:var(--surface);color:var(--muted);border:1px dashed var(--line)}
+.mes.isento{background:#EFEAF5;color:#6B5A80}
+.leg{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:.8rem;color:var(--muted)}
+.leg i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.nota{color:var(--muted);font-size:.88rem;margin-top:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="voltar" id="linkHub" href="#">‹ Voltar ao ACBT Fácil</a>
+
+  <section id="telaForm">
+    <h1>Mensalidade e taxa de água</h1>
+    <p class="intro">Confira se você está em dia e quais meses estão pendentes.</p>
+    <div class="card">
+      <label for="saram">SARAM <span class="dica">7 dígitos</span></label>
+      <input id="saram" inputmode="numeric" maxlength="7" autocomplete="off">
+      <label for="cpf4">4 últimos dígitos do CPF <span class="dica">ex.: CPF terminado em 789-01 → digite 8901</span></label>
+      <input id="cpf4" inputmode="numeric" maxlength="4" autocomplete="off">
+      <button class="prim" id="btnConsultar">Consultar</button>
+      <div class="erro oculto" id="erro" role="alert"></div>
+      <p class="privado">Você vê só a sua situação. Nenhum dado de outros moradores é exibido.</p>
+    </div>
+  </section>
+
+  <section id="telaRes" class="oculto" aria-live="polite"></section>
+</div>
+
+<script>
+const LINK_HUB = "https://script.google.com/macros/s/AKfycbxzgOl8IVkikR6DhFU0BcP_sR1y21PGR5VN3MmnPCoRgPlCqZovzY6W3aH5YKugw57obA/exec";
+document.getElementById("linkHub").href = LINK_HUB;
+
+const MESES = ["","jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const brl = v => "R$ " + (v || 0).toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+const fmtComp = c => c ? `${c.slice(4,6)}/${c.slice(0,4)}` : "";
+const mesNome = c => MESES[+c.slice(4,6)] + "/" + c.slice(0,4);
+
+["saram","cpf4"].forEach(id => $(id).addEventListener("input", e => {
+  e.target.value = e.target.value.replace(/\D/g,"");
+}));
+$("cpf4").addEventListener("keydown", e => { if(e.key === "Enter") consultar(); });
+$("btnConsultar").addEventListener("click", consultar);
+
+function consultar(){
+  const btn = $("btnConsultar"), erro = $("erro");
+  erro.classList.add("oculto");
+  const saram = $("saram").value, cpf4 = $("cpf4").value;
+  if(saram.length !== 7 || cpf4.length !== 4){
+    erro.textContent = "Informe o SARAM com 7 dígitos e os 4 últimos dígitos do CPF.";
+    erro.classList.remove("oculto");
+    return;
+  }
+  btn.disabled = true; btn.textContent = "Consultando…";
+  google.script.run
+    .withSuccessHandler(r => {
+      btn.disabled = false; btn.textContent = "Consultar";
+      if(!r.ok){ erro.textContent = r.msg; erro.classList.remove("oculto"); return; }
+      mostrar(r.dados);
+    })
+    .withFailureHandler(() => {
+      btn.disabled = false; btn.textContent = "Consultar";
+      erro.textContent = "Não foi possível consultar agora. Verifique a internet e tente de novo.";
+      erro.classList.remove("oculto");
+    })
+    .consultar(saram, cpf4);
+}
+
+function blocoCobranca(titulo, c, isento){
+  if(!c) return "";
+  const pend = c.pendencias.length
+    ? c.pendencias.map(x => `<div class="pend">
+        <span><span class="m">${esc(mesNome(x.comp))}</span><span class="d">${esc(x.rotulo)}${x.pago ? ` · pago ${brl(x.pago)}` : ""}</span></span>
+        <span class="v">${brl(x.valor)}</span></div>`).join("")
+    : `<div class="emdia">${isento ? "Isento da taxa de água." : "Nenhum mês em aberto."}</div>`;
+  const carne = c.meses.length ? `<div class="carne">${c.meses.map(x =>
+      `<span class="mes ${esc(x.estado)}" title="${esc(fmtComp(x.comp))}: ${esc(x.rotulo)}"><b>${MESES[+x.comp.slice(4,6)]}</b>${x.comp.slice(0,4)}</span>`).join("")}</div>` : "";
+  return `<div class="bloco card"><h2>${titulo}</h2>${pend}${carne}</div>`;
+}
+
+function mostrar(d){
+  const total = (d.mensalidade ? d.mensalidade.emAberto : 0) + (d.agua ? d.agua.emAberto : 0);
+  const nMeses = (d.mensalidade ? d.mensalidade.pendencias.length : 0) + (d.agua ? d.agua.pendencias.length : 0);
+  const status = total > 0
+    ? `<div class="status bad"><b>${brl(total)} em aberto</b><span>${nMeses} pendência${nMeses === 1 ? "" : "s"} entre mensalidade e taxa de água.</span></div>`
+    : `<div class="status ok"><b>Você está em dia</b><span>Nenhuma pendência de mensalidade ou taxa de água.</span></div>`;
+
+  $("telaRes").innerHTML = `
+    <div class="quem">${esc(d.nome)}<small>${[d.posto, d.pnr ? "PNR " + d.pnr : ""].filter(Boolean).map(esc).join(" · ")}</small></div>
+    ${d.encerrado ? `<div class="erro">Cadastro encerrado em ${esc(fmtComp(d.saida))}. Os meses seguintes não são cobrados.</div>` : ""}
+    ${status}
+    ${blocoCobranca("Mensalidade" + (d.mensalidade && d.mensalidade.valor ? ` · ${brl(d.mensalidade.valor)}/mês` : ""), d.mensalidade)}
+    ${blocoCobranca("Taxa de água e esgoto", d.agua, d.agua && d.agua.isento)}
+    <div class="leg">
+      <span><i style="background:var(--ok-cl)"></i>Pago</span>
+      <span><i style="background:var(--warn-cl)"></i>Em parte / não descontado</span>
+      <span><i style="background:var(--bad-cl)"></i>Em aberto</span>
+      <span><i style="border:1px dashed var(--line)"></i>Aguardando</span>
+    </div>
+    <p class="nota">${d.atualizadoEm ? `Dados atualizados em ${esc(d.atualizadoEm)}. ` : ""}Pagou por PIX ou em dinheiro e ainda aparece em aberto? O lançamento é feito pela diretoria e pode levar alguns dias. Se já faz mais tempo, fale com a administração.</p>
+    <button class="sec" id="btnNova">Nova consulta</button>`;
+  $("telaForm").classList.add("oculto");
+  $("telaRes").classList.remove("oculto");
+  $("btnNova").addEventListener("click", () => {
+    $("saram").value = ""; $("cpf4").value = "";
+    $("telaRes").classList.add("oculto"); $("telaForm").classList.remove("oculto");
+    $("saram").focus();
+  });
+  window.scrollTo(0, 0);
+}
+
+/* ---------- App instalado: troca de página sem sair do app ---------- */
+(function(){
+  const EXEC_APP = "https://script.google.com/macros/s/AKfycbxzgOl8IVkikR6DhFU0BcP_sR1y21PGR5VN3MmnPCoRgPlCqZovzY6W3aH5YKugw57obA/exec";
+  let dentroDoApp = false;
+  try{ google.script.url.getLocation(l => { dentroDoApp = !!(l.parameter && l.parameter.app === "1"); }); }catch(_){}
+  document.addEventListener("click", e => {
+    const a = e.target.closest && e.target.closest("a[href]");
+    if(!a || !dentroDoApp) return;
+    const href = a.getAttribute("href") || "";
+    if(href.indexOf(EXEC_APP) !== 0) return;
+    e.preventDefault();
+    window.top.postMessage({ acbt: "ir", url: href + (href.indexOf("?") > -1 ? "&" : "?") + "app=1" }, "*");
+  }, true);
+})();
+</script>
+</body>
+</html>
