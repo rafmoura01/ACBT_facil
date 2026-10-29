@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ACBT Fácil</title>
+<meta name="description" content="Chamados, área de lazer, mensalidade e telefones úteis do Conjunto Habitacional Bandeirante.">
+<meta name="theme-color" content="#0038A8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ACBT Fácil">
+<meta property="og:title" content="ACBT Fácil">
+<meta property="og:description" content="Serviços do Conjunto Habitacional Bandeirante na palma da mão.">
+<meta property="og:image" content="icone-512.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icone-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+html,body{margin:0;height:100%;background:#002266;overflow:hidden}
+body{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+#app{display:block;border:0;width:100%;height:100%;background:#F5EFFC}
+#carregando{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  background:#002266;color:#FFD200;font:600 16px system-ui,-apple-system,"Segoe UI",sans-serif;transition:opacity .35s}
+#carregando img{width:132px;height:132px;border-radius:28px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.dica{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:520px;margin:0 auto;
+  background:#fff;color:#0A1A3A;border-radius:18px;padding:16px 16px 14px;box-shadow:0 10px 40px rgba(0,30,90,.35);
+  font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;display:none;z-index:5}
+.dica.ver{display:block}
+.dica .t{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.dica .t img{width:44px;height:44px;border-radius:10px}
+.dica .t b{font-size:17px}
+.dica .acoes{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.dica button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:10px 16px;cursor:pointer}
+.dica .sim{background:#0038A8;color:#fff}
+.dica .nao{background:#E6EFFC;color:#0038A8}
+.seta{display:inline-block;padding:0 5px;border:1.5px solid #1E64C8;border-radius:6px;font-weight:700}
+</style>
+</head>
+<body>
+<iframe id="app" title="ACBT Fácil" allow="clipboard-write"></iframe>
+
+<div id="carregando"><img src="icone-192.png" alt=""><span>Carregando o ACBT Fácil…</span></div>
+
+<div class="dica" id="dicaAndroid" role="dialog" aria-label="Instalar o app">
+  <div class="t"><img src="icone-192.png" alt=""><b>Instalar o ACBT Fácil</b></div>
+  Coloque o app na tela inicial do celular, com o brasão da ACBT, e abra com um toque.
+  <div class="acoes"><button class="nao" data-fechar>Agora não</button><button class="sim" id="btnInstalar">Instalar</button></div>
+</div>
+
+<div class="dica" id="dicaIos" role="dialog" aria-label="Instalar o app no iPhone">
+  <div class="t"><img src="apple-touch-icon.png" alt=""><b>Instale no seu iPhone</b></div>
+  Toque em <span class="seta">Compartilhar ⬆️</span> na barra do Safari e depois em <b>“Adicionar à Tela de Início”</b>.
+  <div class="acoes"><button class="sim" data-fechar>Entendi</button></div>
+</div>
+
+<script>
+const EXEC = "https://script.google.com/macros/s/AKfycbxzgOl8IVkikR6DhFU0BcP_sR1y21PGR5VN3MmnPCoRgPlCqZovzY6W3aH5YKugw57obA/exec";
+const app = document.getElementById("app");
+app.src = EXEC + "?app=1";
+app.addEventListener("load", () => {
+  const c = document.getElementById("carregando");
+  if(c){ c.style.opacity = 0; setTimeout(() => c.remove(), 400); }
+});
+
+/* As telas do ACBT Fácil pedem para trocar de página por aqui, sem sair do app. */
+window.addEventListener("message", e => {
+  const d = e.data || {};
+  if(!/\.googleusercontent\.com$|^https:\/\/script\.google\.com$/.test(e.origin)) return;
+  if(d.acbt === "ir" && typeof d.url === "string" && d.url.indexOf(EXEC) === 0) app.src = d.url;
+});
+
+/* Convite para instalar */
+const instalado = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const ja = k => { try{ return localStorage.getItem(k) === "1"; }catch(_){ return false; } };
+const marcar = k => { try{ localStorage.setItem(k, "1"); }catch(_){} };
+document.querySelectorAll("[data-fechar]").forEach(b => b.addEventListener("click", () => {
+  b.closest(".dica").classList.remove("ver"); marcar("acbt-dica-fechada");
+}));
+
+let pedido = null;
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault(); pedido = e;
+  if(!instalado && !ja("acbt-dica-fechada")) document.getElementById("dicaAndroid").classList.add("ver");
+});
+document.getElementById("btnInstalar").addEventListener("click", async () => {
+  document.getElementById("dicaAndroid").classList.remove("ver");
+  if(pedido){ pedido.prompt(); await pedido.userChoice; pedido = null; }
+});
+if(ios && !instalado && !ja("acbt-dica-fechada")){
+  setTimeout(() => document.getElementById("dicaIos").classList.add("ver"), 1500);
+}
+
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+</body>
+</html>
